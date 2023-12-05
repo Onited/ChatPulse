@@ -1,11 +1,12 @@
+// PrivateRoute.js
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../Utils/AuthContext'; // Assurez-vous que ce hook existe et est bien configuré
+import { useAuth } from '../Utils/AuthContext';
 
 const PrivateRoute = () => {
-  const { currentUser } = useAuth(); // useAuth est un hook qui retourne l'état d'authentification actuel
+  const { currentUser } = useAuth();
 
-  return currentUser ? <Outlet /> : <Navigate to="/register" />;
+  return currentUser ? <Outlet /> : <Navigate to="/home" />;
 };
 
 export default PrivateRoute;
