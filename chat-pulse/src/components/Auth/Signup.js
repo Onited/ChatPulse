@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../Utils/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
+function Signup() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -11,11 +11,11 @@ function Login() {
 
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleSignup = async (e) => {
         e.preventDefault();
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            setSuccessMessage('Connexion réussie. Redirection en cours...');
+            await createUserWithEmailAndPassword(auth, email, password);
+            setSuccessMessage('Compte créé avec succès. Redirection en cours...');
             setTimeout(() => navigate('/chat'), 3000); // Redirige après 3 secondes
         } catch (err) {
             setError(err.message);
@@ -24,7 +24,7 @@ function Login() {
 
     return (
         <div>
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleSignup}>
                 <input
                     type="email"
                     value={email}
@@ -37,7 +37,7 @@ function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Mot de passe"
                 />
-                <button type="submit">Se connecter</button>
+                <button type="submit">S'inscrire</button>
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
@@ -45,4 +45,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Signup;
