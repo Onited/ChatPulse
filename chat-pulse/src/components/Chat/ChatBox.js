@@ -1,26 +1,28 @@
-// import React from 'react';
-// import MessageInput from './MessageInput';
-// import Message from './Message';
-// // Importe le hook ou le service pour communiquer avec Firebase
+// Chat.js
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../Utils/AuthContext';
 
-// const ChatBox = () => {
-//   // Logique de chat ici
-//   return (
-//     <div>
-//       <MessageInput />
-//       {/* Ici, tu afficherais les messages en mappant sur l'état qui les contient */}
-//     </div>
-//   );
-// };
+const ChatBox = () => {
+    const { currentUser, logout } = useAuth(); // useAuth doit fournir une méthode signOut
+    const navigate = useNavigate();
 
-// export default ChatBox;
-// src/components/Chat/ChatBox.js
-// import React from 'react';
-// retire l'importation de Message si tu ne l'utilises pas
-// import Message from './Message';
+    const handleLogout = async () => {
+        try {
+            await logout(); // Utilisez la méthode signOut de Firebase
+            navigate('/login'); // Redirigez l'utilisateur vers la page de connexion après la déconnexion
+        } catch (error) {
+            console.error("Erreur lors de la déconnexion:", error);
+        }
+    };
 
-function ChatBox() {
-    // Ton code ici
-}
+    return (
+        <div>
+            {currentUser && <p>Vous êtes connecté avec l'adresse mail: {currentUser.email}</p>}
+            {/* ... contenu du chat ... */}
+            <button onClick={handleLogout}>Déconnexion</button>
+        </div>
+    );
+};
 
 export default ChatBox;
