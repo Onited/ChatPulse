@@ -6,6 +6,7 @@ import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import NotFound from './components/Error/NotFound';
 import PrivateRoute from './components/PrivateRoute.js';
+import Home from './components/Common/HomePage';
 // Autres imports si nécessaire
 
 function App() {
@@ -14,7 +15,8 @@ function App() {
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Signup />} />
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
                 <Route path="*" element={<NotFound/>} />
                 <Route element={<PrivateRoute />}>
                     <Route path="/chat" element={<ChatBox />} />

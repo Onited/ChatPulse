@@ -16,10 +16,14 @@ function Login() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             setSuccessMessage('Connexion réussie. Redirection en cours...');
-            setTimeout(() => navigate('/chat'), 3000); // Redirige après 3 secondes
+            setTimeout(() => navigate('/chat'), 2000);
         } catch (err) {
             setError(err.message);
         }
+    };
+
+    const goToHome = () => {
+        navigate('/home');
     };
 
     return (
@@ -41,6 +45,7 @@ function Login() {
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+            <button onClick={goToHome}>Retour à l'accueil</button>
         </div>
     );
 }
