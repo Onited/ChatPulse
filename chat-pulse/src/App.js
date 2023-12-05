@@ -5,7 +5,7 @@ import ChatBox from './components/Chat/ChatBox';
 import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import NotFound from './components/Error/NotFound';
-import PrivateRoute from './components/PrivateRoute';
+import PrivateRoute from './components/PrivateRoute.js';
 // Autres imports si nécessaire
 
 function App() {
@@ -17,8 +17,7 @@ function App() {
                 <Route path="/" element={<Login />} />
                 <Route path="*" element={<NotFound/>} />
                 <Route element={<PrivateRoute />}>
-                <Route path="/chat" element={<ChatBox />} />
-                {/* Vous pouvez ajouter d'autres routes privées ici */}
+                    <Route path="/chat" element={<ChatBox />} />
                 </Route>
             </Routes>
         </Router>
