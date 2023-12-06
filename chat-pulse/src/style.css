@@ -1,9 +1,9 @@
 /* styles.css */
 :root {
-    --background-light: #ffffff;
-    --background-dark: #212121;
+    --background-light: #fff;
+    --background-dark: #333;
     --text-light: #333;
-    --text-dark: #ffffff;
+    --text-dark: #fff;
 }
 
 .light-mode {
@@ -16,13 +16,4 @@
     color: var(--text-dark);
 }
 
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-.app-container {
-    display: flex;
-    height: 100%;
-}
+/* Ajoutez d'autres styles spécifiques pour chaque mode si nécessaire */
