@@ -9,7 +9,7 @@ const Message = ({ message }) => {
 
     return (
         <div className={`message ${isOwnMessage ? 'own' : ''}`}>
-            <p>{message.text}</p>
+            <p><strong>{message.pseudo}</strong>: {message.text}</p>
             {/* Ajoutez ici plus de détails si nécessaire, comme l'heure ou le nom de l'utilisateur */}
         </div>
     );

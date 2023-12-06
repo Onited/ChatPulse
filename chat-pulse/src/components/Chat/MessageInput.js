@@ -1,19 +1,19 @@
-// src/components/Chat/MessageInput.js
 import React, { useState } from 'react';
-import { db } from '../../Utils/firebaseConfig'; // Assurez-vous que le chemin est correct
+import { db } from '../../Utils/firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { useAuth } from '../../Utils/AuthContext'; // Assurez-vous que le chemin est correct
+import { useAuth } from '../../Utils/AuthContext';
 
 const MessageInput = () => {
     const [text, setText] = useState('');
     const { currentUser } = useAuth();
 
     const sendMessage = async (text) => {
-        if (text.trim() === '') return;
+        if (!text.trim()) return;
 
         await addDoc(collection(db, 'messages'), {
             text: text,
             uid: currentUser.uid,
+            pseudo: currentUser.displayName,  // Assurez-vous que le pseudo est récupéré depuis l'état currentUser
             timestamp: serverTimestamp(),
         });
 

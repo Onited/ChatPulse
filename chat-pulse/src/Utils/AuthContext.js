@@ -1,66 +1,10 @@
-// // src/utils/AuthContext.js ou src/AuthContext.js
-// import React, { useContext, useState, useEffect } from 'react';
-// import { auth } from './firebaseConfig';
-// import { setPersistence, signInWithEmailAndPassword, browserLocalPersistence } from 'firebase/auth';
-
-// const AuthContext = React.createContext();
-
-// export function useAuth() {
-//     return useContext(AuthContext);
-// }
-
-// export function AuthProvider({ children }) {
-//     const [currentUser, setCurrentUser] = useState();
-//     const [loading, setLoading] = useState(true);
-
-//     function signUp(email, password) {
-//         return auth.createUserWithEmailAndPassword(email, password);
-//     }
-
-//     function login(email, password) {
-//         setPersistence(auth, browserLocalPersistence)
-//             .then(() => {
-//                 return signInWithEmailAndPassword(auth, email, password);
-//             })
-//             .catch((error) => {
-//                 console.log(error.code);
-//                 console.log(error.message);
-//             });
-//     }
-
-//     function logout() {
-//         return auth.signOut();
-//     }
-
-//     useEffect(() => {
-//         const unsubscribe = auth.onAuthStateChanged(user => {
-//             setCurrentUser(user);
-//             setLoading(false)
-//         });
-
-//         return unsubscribe;
-//     }, []);
-
-//     const value = {
-//         currentUser,
-//         signUp,
-//         login,
-//         logout,
-//     };
-
-//     return (
-//         <AuthContext.Provider value={value}>
-//             {!loading && children}
-//         </AuthContext.Provider>
-//     );
-// }
-
-import { onAuthStateChanged } from 'firebase/auth';
-import { useEffect, useState, useContext, createContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { auth } from './firebaseConfig';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from './firebaseConfig';
 
-const AuthContext = createContext();
+const AuthContext = React.createContext();
 
 export function useAuth() {
     return useContext(AuthContext);
@@ -70,21 +14,25 @@ export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    function signUp(email, password) {
-        return createUserWithEmailAndPassword(auth, email, password);
-    }
-
-    function login(email, password) {
-        return signInWithEmailAndPassword(auth, email, password);
-    }
 
     function logout() {
         return auth.signOut();
     }
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Récupérez le pseudo de Firestore
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                const userData = userDoc.data();
+                setCurrentUser({
+                    ...user,
+                    pseudo: userData ? userData.pseudo : null,  // Ajoutez le pseudo ici
+                });
+            } else {
+                setCurrentUser(null);
+            }
             setLoading(false);
         });
 
@@ -93,8 +41,7 @@ export function AuthProvider({ children }) {
 
     const value = {
         currentUser,
-        signUp,
-        login,
+        setCurrentUser,
         logout,
     };
 
