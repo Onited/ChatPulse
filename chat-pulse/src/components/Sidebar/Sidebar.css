@@ -1,0 +1,16 @@
+.sidebar {
+    width: 250px; 
+    height: 100vh; 
+    padding: 10px;
+    position: fixed;
+}
+
+.dark-mode-sidebar {
+    background-color: #2f2f2f;
+    color: #fff;
+}
+
+.light-mode-sidebar {
+    background-color: #f0f0f0;
+    color: #2f2f2f;
+}

@@ -1,22 +1,27 @@
-/* MessageInput.css */
 .footer-container {
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%;
-    background-color: #f1f1f1; /* Couleur de fond de votre choix */
+    width: 100%;/* Couleur de fond de votre choix */
     padding: 10px;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2); /* Optionnel, pour l'ombre en haut */
 }
 
 .textarea-message {
-    width: calc(100% - 120px); /* Calculez la largeur en tenant compte du bouton */
+    width: calc(100% - 120px);
     min-height: 50px;
-    resize: none; /* Empêcher le redimensionnement manuel */
-    /* Ajoutez d'autres styles CSS ici */
+    resize: none;
 }
 
 .send-button, .logout-button {
-    width: 60px; /* Taille du bouton */
-    /* Ajoutez d'autres styles CSS ici */
+    width: 60px;
+}
+
+.dark-mode-footer {
+    background-color: #2f2f2f;
+    color: #fff;
+}
+
+.light-mode-footer {
+    background-color: #f0f0f0;
+    color: #2f2f2f;
 }

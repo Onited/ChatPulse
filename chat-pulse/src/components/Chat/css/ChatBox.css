@@ -1,5 +1,5 @@
 .messages-container {
-    padding-bottom: 100px; /* Assurez-vous que c'est au moins la hauteur du footer */
+    padding-bottom: 100px;
+    padding-left: 290px;
     box-sizing: border-box;
-    /* Autres styles pour le conteneur de messages... */
 }
