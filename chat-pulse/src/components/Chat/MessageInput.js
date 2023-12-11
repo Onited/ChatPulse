@@ -1,86 +1,79 @@
 import React, { useState } from 'react';
+import { Editor, EditorState, ContentState } from 'draft-js';
 import { db } from '../../Utils/firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../../Utils/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../Utils/ThemeContext';
 import './css/MessageInput.css';
+import 'draft-js/dist/Draft.css';
 
 const MessageInput = () => {
-    const [text, setText] = useState('');
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const { currentUser } = useAuth();
-    const { logout } = useAuth();
     const { darkMode } = useTheme();
 
-    const sendMessage = async (text) => {
+    const sendMessage = async () => {
+        const currentContent = editorState.getCurrentContent();
+        const text = currentContent.getPlainText();
+    
         if (!text.trim()) return;
-
+    
         await addDoc(collection(db, 'messages'), {
             text: text,
             uid: currentUser.uid,
-            pseudo: currentUser.displayName,  // Assurez-vous que le pseudo est récupéré depuis l'état currentUser
+            pseudo: currentUser.displayName,
             timestamp: serverTimestamp(),
         });
-
-        setText('');
+    
+        const emptyContentState = ContentState.createFromText('');
+        const newEditorState = EditorState.push(editorState, emptyContentState, 'remove-range');
+        const movedFocusEditorState = EditorState.moveFocusToEnd(newEditorState);
+    
+        setEditorState(movedFocusEditorState);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        sendMessage(text);
+        sendMessage();
     };
 
-
-    const navigate = useNavigate();
-    const handleLogout = async () => {
-        try {
-            await logout();
-            navigate('/home');
-        } catch (error) {
-            console.error("Erreur lors de la déconnexion:", error);
-        }
-    };
-
-    const handleKeyDown = (e) => {
+    const handleReturn = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            sendMessage(text);
-            setText('');
+            sendMessage();
+            return 'handled';
         }
+        return 'not-handled';
     };
 
-    if (darkMode) {
+    const className = `footer-container ${darkMode ? 'dark-mode-footer' : 'light-mode-footer'}`;
+    if (darkMode){
         return (
-
-            <div className="footer-container dark-mode-footer">
+            <div className={className}>
                 <form onSubmit={handleSubmit}>
-                    <textarea
-                        className="textarea-message"
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Type a message..."
-                        rows={1}
-                    />
-                    <button className="send-button" type="submit">Send</button>
-                    <button className='logout-button' onClick={handleLogout}>Logout</button>
+                    <div className="message-input dark-mode-input">
+                        <Editor
+                            editorState={editorState}
+                            onChange={setEditorState}
+                            handleReturn={handleReturn}
+                            placeholder="Type a message..."
+                        />
+                    </div>
                 </form>
             </div>
         );
-    } else {
+    }else{
         return (
-            <div className="footer-container light-mode-footer">
+            <div className={className}>
                 <form onSubmit={handleSubmit}>
-                    <textarea
-                        className="textarea-message"
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Type a message..."
-                        rows={1}
-                    />
-                    <button className="send-button" type="submit">Send</button>
-                    <button className='logout-button' onClick={handleLogout}>Logout</button>
+                    <div className="message-input light-mode-input">
+                        <Editor
+                            editorState={editorState}
+                            onChange={setEditorState}
+                            handleReturn={handleReturn}
+                            placeholder="Type a message..."
+                        />
+                    </div>
                 </form>
             </div>
         );

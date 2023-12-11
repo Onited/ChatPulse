@@ -2,14 +2,22 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%;/* Couleur de fond de votre choix */
+    width: 100%;
     padding: 10px;
 }
 
-.textarea-message {
-    width: calc(100% - 120px);
-    min-height: 50px;
-    resize: none;
+.message-input {
+    margin-left: 20%;
+    border-radius: 5px;
+    width: 70%;
+    min-height: 20px;
+    padding: 10px;
+    color: #2f2f2f;
+}
+
+.message-input .DraftEditor-root {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .send-button, .logout-button {
@@ -24,4 +32,14 @@
 .light-mode-footer {
     background-color: #f0f0f0;
     color: #2f2f2f;
+}
+
+.dark-mode-input {
+    background-color: #212121;
+    color: #fff;
+}
+
+.light-mode-input {
+    background-color: #fff;
+    color: #212121;
 }
