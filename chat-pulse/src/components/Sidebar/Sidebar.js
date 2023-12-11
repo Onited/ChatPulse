@@ -22,13 +22,14 @@ const Sidebar = ({ switchComponent }) => {
     };
 
     useEffect(() => {
-        let unsubscribe;
-        if (currentUser) {
-            unsubscribe = listenForFriends(currentUser.uid, setFriends);
+        console.log("currentUser UID:", currentUser?.uid);
+        if (currentUser && currentUser.uid) {
+            const unsubscribe = listenForFriends(currentUser.uid, (newFriends) => {
+                console.log("Amis chargés:", newFriends);
+                setFriends(newFriends);
+            });
+            return unsubscribe;
         }
-        return () => {
-            if (unsubscribe) unsubscribe(); // Nettoyer en annulant l'écoute lors du démontage
-        };
     }, [currentUser]);
 
     return (

@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getFriendRequests, acceptFriendRequest, declineFriendRequest } from '../../Utils/Services/friendService';
+import { listenForFriendRequests, acceptFriendRequest, declineFriendRequest } from '../../Utils/Services/friendService';
 
 const FriendRequests = ({ userId }) => {
     const [requests, setRequests] = useState([]);
 
     useEffect(() => {
-        const fetchRequests = async () => {
-            const fetchedRequests = await getFriendRequests(userId);
-            setRequests(fetchedRequests);
-        };
-
-        fetchRequests();
+        const unsubscribe = listenForFriendRequests(userId, setRequests);
+        return () => unsubscribe();
     }, [userId]);
 
     const handleAccept = async (requestId) => {
