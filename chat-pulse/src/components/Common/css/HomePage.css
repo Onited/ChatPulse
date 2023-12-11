@@ -1,0 +1,35 @@
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+.home-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    height: 50%;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.home-container button{
+    padding: 10px;
+    margin: 10px;
+    width: 30%;
+    border: none;
+}
+
+.dark-mode-home{
+    background-color: #2f2f2f;
+    color: #f0f0f0;
+}
+
+.light-mode-home{
+    background-color: #f0f0f0;
+    color: #2f2f2f;
+}
