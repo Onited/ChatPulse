@@ -5,7 +5,7 @@ import { useTheme } from '../../Utils/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Utils/AuthContext';
 import { useEffect, useState } from 'react';
-import { getFriends } from '../../Utils/Services/friendService';
+import { listenForFriends } from '../../Utils/Services/friendService';
 const Sidebar = ({ switchComponent }) => {
     const { darkMode, toggleDarkMode } = useTheme();
     const { currentUser, logout } = useAuth();
@@ -22,14 +22,13 @@ const Sidebar = ({ switchComponent }) => {
     };
 
     useEffect(() => {
-        const fetchFriends = async () => {
-            if (currentUser) {
-                const friendList = await getFriends(currentUser.uid);
-                setFriends(friendList);
-            }
+        let unsubscribe;
+        if (currentUser) {
+            unsubscribe = listenForFriends(currentUser.uid, setFriends);
+        }
+        return () => {
+            if (unsubscribe) unsubscribe(); // Nettoyer en annulant l'écoute lors du démontage
         };
-
-        fetchFriends();
     }, [currentUser]);
 
     return (

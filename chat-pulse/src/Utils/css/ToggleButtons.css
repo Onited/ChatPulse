@@ -6,7 +6,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    margin-left: 10px;
+    margin: 10px;
 }
 
 .light-mode-button {
@@ -17,5 +17,5 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    margin-left: 10px;
+    margin: 10px;
 }
