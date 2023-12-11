@@ -51,7 +51,7 @@ function Signup() {
             });
 
             setSuccessMessage('Compte créé avec succès. Redirection en cours...');
-            setTimeout(() => navigate('/chat'), 2000);
+            setTimeout(() => navigate('/home'), 2000);
         } catch (err) {
             setError(err.message);
         }
@@ -125,7 +125,7 @@ function Signup() {
                     </form>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-                    <p>You already have an account ? <a href='/login'>Login</a> or <a href='/home'>go home</a></p>
+                    <p>You already have an account ? <a href='/login'>Login</a> or <a href='/'>go home</a></p>
                 </div>
             </div>
         );

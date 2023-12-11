@@ -6,7 +6,7 @@ const PublicRoute = ({ children }) => {
     const { currentUser } = useAuth();
 
     if (currentUser) {
-        return <Navigate to="/chat" />;
+        return <Navigate to="/home" />;
     }
 
     return children;

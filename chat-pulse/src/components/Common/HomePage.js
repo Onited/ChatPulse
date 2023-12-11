@@ -1,43 +1,25 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../../Utils/ThemeContext';
+import React, { useState } from 'react';
+import Sidebar from '../Sidebar/Sidebar';
+import FriendRequests from '../Friends/FriendRequests';
+import UserSearch from '../Friends/UserSearch';
+import ChatBox from '../Chat/ChatBox';
+import { useAuth } from '../../Utils/AuthContext';
 import './css/HomePage.css';
 
-const HomePage = () => {
-    const navigate = useNavigate();
-    const { darkMode } = useTheme();
-
-
-    const goToLogin = () => {
-        navigate('/login');
-    };
-
-    const goToRegister = () => {
-        navigate('/register');
-    };
-    if (darkMode) {
-        return (
-            <div className="container">
-                <div className="home-container dark-mode-home">
-                    <h1>Bienvenue sur ChatPulse</h1>
-                    <p>Votre application de messagerie instantanée.</p>
-                    <button onClick={goToLogin}>Se connecter</button>
-                    <button onClick={goToRegister}>S'inscrire</button>
-                </div>
+const FriendsPage = () => {
+    const { currentUser } = useAuth();
+    const [currentComponent, setCurrentComponent] = useState('chatBox');
+    
+    return (
+        <div className="home-page">
+            <Sidebar switchComponent={setCurrentComponent} />
+            <div className='home-container'>
+                {currentComponent === 'chatBox' && <ChatBox />}
+                {currentComponent === 'userSearch' && <UserSearch currentUserId={currentUser.uid} />}
+                {currentComponent === 'friendRequests' && <FriendRequests userId={currentUser.uid} />}
             </div>
-        );
-    }else{
-        return (
-            <div className="container">
-                <div className="home-container light-mode-home">
-                    <h1>Bienvenue sur ChatPulse</h1>
-                    <p>Votre application de messagerie instantanée.</p>
-                    <button onClick={goToLogin}>Se connecter</button>
-                    <button onClick={goToRegister}>S'inscrire</button>
-                </div>
-            </div>
-        );
-    }
+        </div>
+    );
 };
 
-export default HomePage;
+export default FriendsPage;

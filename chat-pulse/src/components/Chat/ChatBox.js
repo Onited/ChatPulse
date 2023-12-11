@@ -3,7 +3,6 @@ import { db } from '../../Utils/firebaseConfig';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import Message from './Message';
 import MessageInput from './MessageInput';
-import Sidebar from '../Sidebar/Sidebar';
 import './css/ChatBox.css';
 
 const ChatBox = () => {
@@ -33,8 +32,8 @@ const ChatBox = () => {
 
     return (
         <div className="chat-box">
-            <Sidebar />
-            <div className="messages-container">
+            {/* <Sidebar /> */}
+            <div className="">
                 {messages.map((message, index) => (
                     <Message 
                         key={message.id} 

@@ -19,7 +19,7 @@ function Login() {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             setSuccessMessage('Connexion réussie. Redirection en cours...');
-            setTimeout(() => navigate('/chat'), 2000);
+            setTimeout(() => navigate('/home'), 2000);
         } catch (err) {
             setError(err.message);
         }
@@ -78,7 +78,7 @@ function Login() {
                     </form>
                     {error && <p style={{ color: 'red' }}>{error}</p>}
                     {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-                    <p>You don't have an account ? <a href='/register'>Signup</a> or <a href='/home'>go home</a></p>
+                    <p>You don't have an account ? <a href='/register'>Signup</a> or <a href='/'>go home</a></p>
                 </div>
             </div>
         );

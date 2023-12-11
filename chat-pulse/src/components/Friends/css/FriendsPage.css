@@ -1,4 +1,4 @@
-.home-container {
+.friends-container {
     margin-bottom: 70px;
     margin-left: 290px;
     font-family: 'Menlo', monospace;
@@ -6,7 +6,7 @@
     width: 80%;
 }
 
-.home-page{
+.friends-page{
     bottom: 0;
     left: 0;
     width: 100%;
