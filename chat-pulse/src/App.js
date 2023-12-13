@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { NotificationProvider } from './Utils/NotificationContext.js';
+import NotificationSound from './Utils/NotificationSound.js';
 import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import NotFound from './components/Error/NotFound';
@@ -8,19 +10,21 @@ import PublicRoute from './components/PublicRoute.js';
 import WelcomePage from './components/Common/WelcomePage.js';
 import HomePage from './components/Common/HomePage.js';
 import { useTheme } from './Utils/ThemeContext';
-import './App.css'; 
+import './App.css';
 
 function App() {
     const { darkMode } = useTheme();
     if (darkMode) {
         document.body.classList.add('dark-mode');
-    }else{
+    } else {
         document.body.classList.remove('dark-mode');
     }
 
     return (
         <Router>
-            <div className='app-container'>
+            <NotificationProvider> {/* Enveloppez avec NotificationProvider */}
+                <NotificationSound /> {/* Ajoutez NotificationSound */}
+                <div className='app-container'>
                     <Routes>
                         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
                         <Route path="/register" element={<PublicRoute><Signup /></PublicRoute>} />
@@ -31,6 +35,7 @@ function App() {
                         </Route>
                     </Routes>
                 </div>
+            </NotificationProvider>
         </Router>
     );
 }

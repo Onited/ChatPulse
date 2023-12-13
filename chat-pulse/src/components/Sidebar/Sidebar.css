@@ -36,3 +36,13 @@
     display: inline-block;
     margin-left: 10px;
 }
+
+/* Hover button */
+
+.dark-mode-button:hover {
+    background-color: #424242;
+}
+
+.light-mode-button:hover {
+    background-color: #e0e0e0;
+}

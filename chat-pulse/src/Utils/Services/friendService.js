@@ -1,5 +1,5 @@
 import { db } from '../firebaseConfig';
-import { collection,addDoc, updateDoc, doc, query, where, getDocs, getDoc, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc, query, where, getDocs, getDoc, onSnapshot } from 'firebase/firestore';
 
 export const listenForFriendRequests = (userId, setRequests) => {
     const q = query(collection(db, 'friendRequests'), where('to', '==', userId), where('status', '==', 'pending'));
@@ -107,4 +107,25 @@ export const sendFriendRequest = async (fromUserId, toUserId) => {
         to: toUserId,
         status: 'pending',
     });
+};
+
+export const startOrGetPrivateConversation = async (userId1, userId2) => {
+    const q = query(
+        collection(db, 'conversations'),
+        where('participantIds', 'array-contains', userId1)
+    );
+
+    const querySnapshot = await getDocs(q);
+    let existingConversation = querySnapshot.docs.find(doc => doc.data().participantIds.includes(userId2));
+
+    if (existingConversation) {
+        return existingConversation.id;
+    }
+
+    const newConversationRef = await addDoc(collection(db, 'conversations'), {
+        participantIds: [userId1, userId2],
+        lastActivity: new Date()
+    });
+
+    return newConversationRef.id;
 };

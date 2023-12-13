@@ -10,14 +10,21 @@ export const ThemeProvider = ({ children }) => {
         return isDarkMode || false;
     });
 
+    const [isSoundEnabled, setIsSoundEnabled] = useState(() => {
+        const isSoundEnabled = localStorage.getItem('isSoundEnabled') !== 'false'; // Le son est activé par défaut sauf si explicitement désactivé
+        return isSoundEnabled;
+    });
+
     useEffect(() => {
         localStorage.setItem('darkMode', darkMode);
-    }, [darkMode]);
+        localStorage.setItem('isSoundEnabled', isSoundEnabled); // Sauvegarde l'état du son dans localStorage
+    }, [darkMode, isSoundEnabled]);
 
     const toggleDarkMode = () => setDarkMode(!darkMode);
+    const toggleSound = () => setIsSoundEnabled(!isSoundEnabled); // Fonction pour basculer le son
 
     return (
-        <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>
+        <ThemeContext.Provider value={{ darkMode, toggleDarkMode, isSoundEnabled, toggleSound }}>
             {children}
         </ThemeContext.Provider>
     );

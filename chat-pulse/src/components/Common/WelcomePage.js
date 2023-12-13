@@ -21,8 +21,8 @@ const WelcomePage = () => {
                 <div className="welcome-container dark-mode-welcome">
                     <h1>Bienvenue sur ChatPulse</h1>
                     <p>Votre application de messagerie instantanée.</p>
-                    <button onClick={goToLogin}>Se connecter</button>
-                    <button onClick={goToRegister}>S'inscrire</button>
+                    <button className='dark-mode-button' onClick={goToLogin}>Se connecter</button>
+                    <button className='dark-mode-button' onClick={goToRegister}>S'inscrire</button>
                 </div>
             </div>
         );
@@ -32,8 +32,8 @@ const WelcomePage = () => {
                 <div className="welcome-container light-mode-welcome">
                     <h1>Bienvenue sur ChatPulse</h1>
                     <p>Votre application de messagerie instantanée.</p>
-                    <button onClick={goToLogin}>Se connecter</button>
-                    <button onClick={goToRegister}>S'inscrire</button>
+                    <button className='light-mode-button' onClick={goToLogin}>Se connecter</button>
+                    <button className='light-mode-button' onClick={goToRegister}>S'inscrire</button>
                 </div>
             </div>
         );

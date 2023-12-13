@@ -13,7 +13,6 @@ const ToggleButtons = ({ switchComponent }) => {
             onClick={() => switchComponent('friendRequests')}>Mes demandes d'amis</button>
             <button className={`${darkMode ? 'dark-mode-button' : 'light-mode-button'}`}
             onClick={() => switchComponent('chatBox')}>Chat General</button>
-            {/* Ajoutez autant de boutons que nécessaire */}
         </div>
     );
 };
