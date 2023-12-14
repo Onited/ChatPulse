@@ -30,7 +30,7 @@ import Sidebar from '../Sidebar/Sidebar';
 import FriendRequests from '../Friends/FriendRequests';
 import UserSearch from '../Friends/UserSearch';
 import ChatBox from '../Chat/ChatBox';
-import PrivateChatBox from '../Chat/PrivateChatBox'; // Assurez-vous d'importer PrivateChatBox
+import PrivateChatBox from '../Chat/PrivateChatBox';
 import { useAuth } from '../../Utils/AuthContext';
 import './css/HomePage.css';
 

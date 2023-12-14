@@ -5,7 +5,7 @@ import { useAuth } from '../Utils/AuthContext';
 const PublicRoute = ({ children }) => {
     const { currentUser } = useAuth();
 
-    if (currentUser) {
+    if (currentUser && currentUser.uid) {
         return <Navigate to="/home" />;
     }
 

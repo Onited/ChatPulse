@@ -8,12 +8,16 @@ const NotificationSound = () => {
     const { currentUser } = useAuth();
 
     useEffect(() => {
+        if (!currentUser || !lastMessage) {
+            return;
+        }
+    
         console.log("Dernier message reçu:", lastMessage);
         console.log("Notification sonore activée:", isSoundEnabled);
-        if (lastMessage && isSoundEnabled && lastMessage.uid !== currentUser.uid) {
+        if (isSoundEnabled && lastMessage.uid !== currentUser.uid) {
             console.log("Jouer le son de notification");
-            new Audio(messageReceivedSound).play().catch(e => console.error("Erreur lors de la lecture du son:", e));
-
+            const audio = new Audio(messageReceivedSound);
+            audio.play().catch(e => console.error("Erreur lors de la lecture du son:", e));
         }
     }, [lastMessage, isSoundEnabled, currentUser]);
 
