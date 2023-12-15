@@ -1,7 +1,7 @@
 // PrivateChatBox.js
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../../Utils/firebaseConfig';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, limit } from 'firebase/firestore';
 import Message from './Message';
 import MessageInput from './MessageInput';
 import './css/ChatBox.css';
@@ -22,7 +22,7 @@ const PrivateChatBox = ({ conversationId }) => {
         } else {
             return;
         }
-    
+        
         await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
             ...messageContent,
             timestamp: serverTimestamp(),
@@ -32,17 +32,17 @@ const PrivateChatBox = ({ conversationId }) => {
     useEffect(() => {
         if (conversationId) {
             const messagesRef = collection(db, 'conversations', conversationId, 'messages');
-            const q = query(messagesRef, orderBy('timestamp', 'asc'));
-    
+            const q = query(messagesRef, orderBy('timestamp', 'desc'), limit(20));
+            
             let isInitialLoad = true;
-    
+            
             const unsubscribe = onSnapshot(q, (snapshot) => {
                 const fetchedMessages = snapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data(),
                 }));
                 setMessages(fetchedMessages);
-    
+                
                 if (fetchedMessages.length > 0) {
                     const newLastMessageId = fetchedMessages[fetchedMessages.length - 1].id;
                     if (newLastMessageId !== lastMessageId.current && !isInitialLoad) {
@@ -51,7 +51,7 @@ const PrivateChatBox = ({ conversationId }) => {
                     isInitialLoad = false;
                 }
             });
-    
+            
             return () => unsubscribe();
         }
     }, [conversationId]);

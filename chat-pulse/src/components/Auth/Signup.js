@@ -25,7 +25,6 @@ function Signup() {
 
         const formattedPseudo = `@${pseudo}`;
 
-        // Vérifier que le pseudo est unique
         const pseudoDocRef = doc(db, 'pseudos', formattedPseudo);
         const pseudoSnap = await getDoc(pseudoDocRef);
         if (pseudoSnap.exists() || !pseudo.trim()) {
@@ -37,12 +36,10 @@ function Signup() {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Mise à jour du profil utilisateur avec le pseudo
             await updateProfile(user, {
                 displayName: formattedPseudo,
             });
 
-            // Enregistrer le pseudo dans Firestore pour garantir l'unicité
             await setDoc(doc(db, 'users', user.uid), { pseudo: formattedPseudo, email: email });
 
             setCurrentUser({
@@ -56,80 +53,47 @@ function Signup() {
             setError(err.message);
         }
     };
-    if (darkMode) {
-        return (
-            <div className='container'>
-                <div className='form-container dark-mode-form'>
+
+    const formClassName = darkMode ? 'form-container dark-mode-form' : 'form-container light-mode-form';
+    const inputClassName = darkMode ? 'dark-mode-input' : '';
+
+    return (
+        <div className='container'>
+            <div className={formClassName}>
                 <h1>Signup</h1>
-                    <form onSubmit={handleSignup}>
-                        <label htmlFor="pseudo">Pseudo: </label>
-                        <input
-                            type="text"
-                            value={pseudo}
-                            onChange={(e) => setPseudo(e.target.value)}
-                            placeholder="Pseudo"
-                            className='dark-mode-input'
-                        />
-                        <label htmlFor="email">Email: </label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                            className='dark-mode-input'
-                        />
-                        <label htmlFor="password">Mot de passe: </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Mot de passe"
-                            className='dark-mode-input'
-                        />
-                        <button type="submit">S'inscrire</button>
-                    </form>
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
-                    {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-                    <p>You already have an account ? <a href='/login'>Login</a> or <a href='/home'>go home</a></p>
-                </div>
+                <form onSubmit={handleSignup}>
+                    <label htmlFor="pseudo">Pseudo: </label>
+                    <input
+                        type="text"
+                        value={pseudo}
+                        onChange={(e) => setPseudo(e.target.value)}
+                        placeholder="Pseudo"
+                        className={inputClassName}
+                    />
+                    <label htmlFor="email">Email: </label>
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                        className={inputClassName}
+                    />
+                    <label htmlFor="password">Mot de passe: </label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Mot de passe"
+                        className={inputClassName}
+                    />
+                    <button type="submit">S'inscrire</button>
+                </form>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
+                <p>You already have an account ? <a href='/login'>Login</a> or <a href='/home'>go home</a></p>
             </div>
-        );
-    }else {
-        return (
-            <div className='container'>
-                <div className='form-container light-mode-form'>
-                    <h1>Signup</h1>
-                    <form onSubmit={handleSignup}>
-                        <label htmlFor="pseudo">Pseudo: </label>
-                        <input
-                            type="text"
-                            value={pseudo}
-                            onChange={(e) => setPseudo(e.target.value)}
-                            placeholder="Pseudo"
-                        />
-                        <label htmlFor="email">Email: </label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                        />
-                        <label htmlFor="password">Mot de passe: </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Mot de passe"
-                        />
-                        <button type="submit">S'inscrire</button>
-                    </form>
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
-                    {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-                    <p>You already have an account ? <a href='/login'>Login</a> or <a href='/'>go home</a></p>
-                </div>
-            </div>
-        );
-    }
+        </div>
+    );
 }
 
 export default Signup;

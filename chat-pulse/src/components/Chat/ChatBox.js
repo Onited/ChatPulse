@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../../Utils/firebaseConfig';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, limit } from 'firebase/firestore';
 import Message from './Message';
 import MessageInput from './MessageInput';
 import './css/ChatBox.css';
@@ -12,7 +12,7 @@ const ChatBox = () => {
 
     useEffect(() => {
         const messagesRef = collection(db, 'conversations', 'global', 'messages');
-        const q = query(messagesRef, orderBy('timestamp', 'asc'));
+        const q = query(messagesRef, orderBy('timestamp', 'desc'), limit(20));
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const fetchedMessages = snapshot.docs.map(doc => ({

@@ -24,7 +24,6 @@ const MessageInput = ({ onSendMessage, conversationId }) => {
             messageContent = currentContent.getPlainText();
             if (!messageContent.trim()) return;
         }
-        console.log(currentUser.uid)
         const messageData = {
             text: messageContent,
             uid: currentUser.uid,
