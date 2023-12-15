@@ -13,7 +13,7 @@ const Sidebar = ({ setActiveConversation, switchComponent }) => {
     const [friends, setFriends] = useState([]);
     const navigate = useNavigate();
     const { isSoundEnabled, setIsSoundEnabled } = useNotification();
-    
+
     const toggleSound = () => {
         setIsSoundEnabled(!isSoundEnabled);
     };

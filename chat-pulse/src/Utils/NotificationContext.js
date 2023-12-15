@@ -31,7 +31,6 @@ export const NotificationProvider = ({ children }) => {
             }
         }));
         
-        // Écoute des conversations privées
         const userConversationsRef = collection(db, 'conversations');
         const userConversationsQuery = query(userConversationsRef, where('participantIds', 'array-contains', currentUser.uid));
         

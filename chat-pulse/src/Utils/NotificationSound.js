@@ -12,10 +12,7 @@ const NotificationSound = () => {
             return;
         }
     
-        console.log("Dernier message reçu:", lastMessage);
-        console.log("Notification sonore activée:", isSoundEnabled);
         if (isSoundEnabled && lastMessage.uid !== currentUser.uid) {
-            console.log("Jouer le son de notification");
             const audio = new Audio(messageReceivedSound);
             audio.play().catch(e => console.error("Erreur lors de la lecture du son:", e));
         }
