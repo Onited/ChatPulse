@@ -1,111 +1,125 @@
 import { db } from '../firebaseConfig';
-import { collection, addDoc, updateDoc, doc, query, where, getDocs, getDoc, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc, query, where, getDocs, getDoc, onSnapshot, arrayUnion, arrayRemove } from 'firebase/firestore';
+
 
 export const listenForFriendRequests = (userId, setRequests) => {
-    const q = query(collection(db, 'friendRequests'), where('to', '==', userId), where('status', '==', 'pending'));
-    return onSnapshot(q, (snapshot) => {
-        const requests = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-        setRequests(requests);
+    const userDocRef = doc(db, 'users', userId);
+
+    return onSnapshot(userDocRef, (docSnapshot) => {
+        const userData = docSnapshot.data();
+        if (userData && userData.friendRequestsPending) {
+            setRequests(userData.friendRequestsPending.map(friendId => ({ id: friendId })));
+        }
     });
 };
 
+export const acceptFriendRequest = async (fromUserId, userId) => {
+    // Mettre à jour la liste d'amis des deux utilisateurs
+    const userDocRef = doc(db, 'users', userId);
+    const friendDocRef = doc(db, 'users', fromUserId);
 
-export const acceptFriendRequest = async (requestId) => {
-    const requestDoc = doc(db, 'friendRequests', requestId);
-    await updateDoc(requestDoc, {
-        status: 'accepted',
+    await updateDoc(userDocRef, {
+        friendIds: arrayUnion(fromUserId),
+        friendRequestsPending: arrayRemove(fromUserId)
     });
+
+    await updateDoc(friendDocRef, {
+        friendIds: arrayUnion(userId)
+    });
+
+    // Supprimez la demande d'ami de la collection friendRequests si nécessaire
 };
 
-
-export const declineFriendRequest = async (requestId) => {
-    const requestDoc = doc(db, 'friendRequests', requestId);
-    await updateDoc(requestDoc, {
-        status: 'declined',
+export const declineFriendRequest = async (fromUserId, userId) => {
+    // Simplement retirer l'ID de l'utilisateur émetteur de la liste d'attente d'amis de l'utilisateur destinataire
+    const userToRef = doc(db, 'users', userId);
+    await updateDoc(userToRef, {
+        friendRequestsPending: arrayRemove(fromUserId)
     });
+
+    // Supprimez la demande d'ami de la collection friendRequests si nécessaire
 };
 
+// export const getFriendRequests = async (userId) => {
+//     const requests = [];
+//     const q = query(collection(db, 'friendRequests'), where('to', '==', userId), where('status', '==', 'pending'));
+//     const querySnapshot = await getDocs(q);
+//     querySnapshot.forEach((doc) => {
+//         requests.push({ id: doc.id, ...doc.data() });
+//     });
+//     return requests;
+// };
 
-export const getFriendRequests = async (userId) => {
-    const requests = [];
-    const q = query(collection(db, 'friendRequests'), where('to', '==', userId), where('status', '==', 'pending'));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        requests.push({ id: doc.id, ...doc.data() });
-    });
-    return requests;
-};
+// export const listenForFriends = (userId, setFriends) => {
+//     const userDocRef = doc(db, 'users', userId);
+
+//     return onSnapshot(userDocRef, async (docSnapshot) => {
+//         const userData = docSnapshot.data();
+//         if (userData && userData.friendIds) {
+//             // Créez un tableau de promesses pour récupérer les documents d'amis
+//             const friendPromises = userData.friendIds.map(friendId => getDoc(doc(db, 'users', friendId)));
+
+//             // Attendez que toutes les promesses soient résolues
+//             const friendDocs = await Promise.all(friendPromises);
+
+//             // Mappez sur les documents résolus pour créer le tableau d'amis
+//             const newFriends = friendDocs.map(docSnapshot => ({
+//                 id: docSnapshot.id,
+//                 ...docSnapshot.data()
+//             }));
+//             setFriends(newFriends);
+//         }
+//     });
+// };
 
 export const listenForFriends = (userId, setFriends) => {
-    const dbRef = collection(db, 'friendRequests');
+    const userDocRef = doc(db, 'users', userId);
 
-    const handleSnapshot = async (snapshot) => {
-        const newFriends = [];
-        for (const docSnapshot of snapshot.docs) {
-            const friendId = docSnapshot.data().from === userId ? docSnapshot.data().to : docSnapshot.data().from;
-            const friendDocRef = doc(db, 'users', friendId);
-            const friendDoc = await getDoc(friendDocRef);
-            if (friendDoc.exists()) {
-                newFriends.push({ id: friendId, pseudo: friendDoc.data().pseudo });
-            }
+    return onSnapshot(userDocRef, async (docSnapshot) => {
+        const userData = docSnapshot.data();
+        if (userData && userData.friendIds && userData.friendIds.length > 0) {
+            const friendsQuery = query(collection(db, 'users'), where('__name__', 'in', userData.friendIds));
+            const querySnapshot = await getDocs(friendsQuery);
+            const friends = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setFriends(friends);
+        } else {
+            setFriends([]);
         }
-        setFriends(prevFriends => {
-            // Fusionner avec les amis précédents en évitant les doublons
-            const mergedFriends = [...prevFriends, ...newFriends];
-            return mergedFriends.filter((friend, index, self) =>
-                index === self.findIndex(f => f.id === friend.id)
-            );
-        });
-    };
-
-    const sentRequests = query(dbRef, where('from', '==', userId), where('status', '==', 'accepted'));
-    const unsubscribeSent = onSnapshot(sentRequests, handleSnapshot);
-
-    const receivedRequests = query(dbRef, where('to', '==', userId), where('status', '==', 'accepted'));
-    const unsubscribeReceived = onSnapshot(receivedRequests, handleSnapshot);
-
-    return () => {
-        unsubscribeSent();
-        unsubscribeReceived();
-    };
+    });
 };
-
-
-
 
 const friendRequestExists = async (fromUserId, toUserId) => {
-    const q = query(collection(db, 'friendRequests'), 
-        where('from', '==', fromUserId),
-        where('to', '==', toUserId));
+    const userToRef = doc(db, 'users', toUserId);
+    const userToDoc = await getDoc(userToRef);
 
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
+    if (userToDoc.exists()) {
+        const userData = userToDoc.data();
+        return userData.friendRequestsPending && userData.friendRequestsPending.includes(fromUserId);
+    }
+
+    return false;
 };
 
-// Envoyer une demande d'ami
 export const sendFriendRequest = async (fromUserId, toUserId) => {
+    // Vérifiez d'abord si une demande d'ami existe déjà
     if (await friendRequestExists(fromUserId, toUserId)) {
         console.log("Une demande d'ami existe déjà entre ces utilisateurs.");
-        return; 
-    }else if (await friendRequestExists(toUserId, fromUserId)) {
-        console.log("Une demande d'ami existe déjà entre ces utilisateurs.");
-        return;
-    } else if (fromUserId === toUserId) {
-        console.log("Vous ne pouvez pas vous envoyer une demande d'ami.");
-        return;
-    } else if (fromUserId === '' || toUserId === '') {
-        console.log("L'ID de l'utilisateur ne peut pas être vide.");
         return;
     }
 
-    // Ajouter la nouvelle demande d'ami dans Firestore
-    await addDoc(collection(db, 'friendRequests'), {
-        from: fromUserId,
-        to: toUserId,
-        status: 'pending',
+    // Ajouter l'ID de l'utilisateur émetteur dans la liste d'attente d'amis de l'utilisateur destinataire
+    const userToRef = doc(db, 'users', toUserId);
+    await updateDoc(userToRef, {
+        friendRequestsPending: arrayUnion(fromUserId)
+    });
+
+    // Optionnel: Ajouter l'ID de l'utilisateur destinataire dans la liste des demandes d'amis envoyées de l'utilisateur émetteur
+    const userFromRef = doc(db, 'users', fromUserId);
+    await updateDoc(userFromRef, {
+        friendRequestsSent: arrayUnion(toUserId)
     });
 };
 
