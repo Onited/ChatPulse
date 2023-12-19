@@ -14,7 +14,6 @@ export const listenForFriendRequests = (userId, setRequests) => {
 };
 
 export const acceptFriendRequest = async (fromUserId, userId) => {
-    // Mettre à jour la liste d'amis des deux utilisateurs
     const userDocRef = doc(db, 'users', userId);
     const friendDocRef = doc(db, 'users', fromUserId);
 
@@ -27,69 +26,65 @@ export const acceptFriendRequest = async (fromUserId, userId) => {
         friendIds: arrayUnion(userId)
     });
 
-    // Supprimez la demande d'ami de la collection friendRequests si nécessaire
 };
 
 export const declineFriendRequest = async (fromUserId, userId) => {
-    // Simplement retirer l'ID de l'utilisateur émetteur de la liste d'attente d'amis de l'utilisateur destinataire
     const userToRef = doc(db, 'users', userId);
     await updateDoc(userToRef, {
         friendRequestsPending: arrayRemove(fromUserId)
     });
 
-    // Supprimez la demande d'ami de la collection friendRequests si nécessaire
 };
-
-// export const getFriendRequests = async (userId) => {
-//     const requests = [];
-//     const q = query(collection(db, 'friendRequests'), where('to', '==', userId), where('status', '==', 'pending'));
-//     const querySnapshot = await getDocs(q);
-//     querySnapshot.forEach((doc) => {
-//         requests.push({ id: doc.id, ...doc.data() });
-//     });
-//     return requests;
-// };
 
 // export const listenForFriends = (userId, setFriends) => {
 //     const userDocRef = doc(db, 'users', userId);
 
 //     return onSnapshot(userDocRef, async (docSnapshot) => {
 //         const userData = docSnapshot.data();
-//         if (userData && userData.friendIds) {
-//             // Créez un tableau de promesses pour récupérer les documents d'amis
-//             const friendPromises = userData.friendIds.map(friendId => getDoc(doc(db, 'users', friendId)));
-
-//             // Attendez que toutes les promesses soient résolues
-//             const friendDocs = await Promise.all(friendPromises);
-
-//             // Mappez sur les documents résolus pour créer le tableau d'amis
-//             const newFriends = friendDocs.map(docSnapshot => ({
-//                 id: docSnapshot.id,
-//                 ...docSnapshot.data()
+//         if (userData && userData.friendIds && userData.friendIds.length > 0) {
+//             const friendsQuery = query(collection(db, 'users'), where('__name__', 'in', userData.friendIds));
+//             const querySnapshot = await getDocs(friendsQuery);
+//             const friends = querySnapshot.docs.map(doc => ({
+//                 id: doc.id,
+//                 ...doc.data()
 //             }));
-//             setFriends(newFriends);
+//             setFriends(friends);
+//         } else {
+//             setFriends([]);
 //         }
 //     });
 // };
 
 export const listenForFriends = (userId, setFriends) => {
     const userDocRef = doc(db, 'users', userId);
+    let unsubscribes = [];
 
-    return onSnapshot(userDocRef, async (docSnapshot) => {
+    onSnapshot(userDocRef, async (docSnapshot) => {
         const userData = docSnapshot.data();
-        if (userData && userData.friendIds && userData.friendIds.length > 0) {
-            const friendsQuery = query(collection(db, 'users'), where('__name__', 'in', userData.friendIds));
-            const querySnapshot = await getDocs(friendsQuery);
-            const friends = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setFriends(friends);
-        } else {
-            setFriends([]);
+        if (userData && userData.friendIds) {
+            // Annuler toutes les écoutes précédentes
+            unsubscribes.forEach(unsubscribe => unsubscribe());
+            unsubscribes = [];
+
+            // Récupérer et écouter les modifications de chaque ami
+            userData.friendIds.forEach(friendId => {
+                const friendRef = doc(db, 'users', friendId);
+                const unsubscribe = onSnapshot(friendRef, (friendDoc) => {
+                    setFriends(prevFriends => {
+                        const newFriends = [...prevFriends.filter(f => f.id !== friendId), { id: friendDoc.id, ...friendDoc.data() }];
+                        return newFriends;
+                    });
+                });
+                unsubscribes.push(unsubscribe);
+            });
         }
     });
+
+    return () => {
+        unsubscribes.forEach(unsubscribe => unsubscribe());
+    };
 };
+
 
 const friendRequestExists = async (fromUserId, toUserId) => {
     const userToRef = doc(db, 'users', toUserId);
@@ -104,24 +99,36 @@ const friendRequestExists = async (fromUserId, toUserId) => {
 };
 
 export const sendFriendRequest = async (fromUserId, toUserId) => {
-    // Vérifiez d'abord si une demande d'ami existe déjà
+    if (fromUserId === toUserId) {
+        console.log("Vous ne pouvez pas vous envoyer une demande d'ami à vous-même.");
+        return;
+    }
+
+    const fromUserRef = doc(db, 'users', fromUserId);
+    const fromUserDoc = await getDoc(fromUserRef);
+
+    if (fromUserDoc.exists() && fromUserDoc.data().friendIds && fromUserDoc.data().friendIds.includes(toUserId)) {
+        console.log("Cette personne est déjà votre ami.");
+        return;
+    }
+
     if (await friendRequestExists(fromUserId, toUserId)) {
         console.log("Une demande d'ami existe déjà entre ces utilisateurs.");
         return;
     }
 
-    // Ajouter l'ID de l'utilisateur émetteur dans la liste d'attente d'amis de l'utilisateur destinataire
+    await addDoc(collection(db, 'friendRequests'), {
+        from: fromUserId,
+        to: toUserId,
+        status: 'pending',
+    });
+
     const userToRef = doc(db, 'users', toUserId);
     await updateDoc(userToRef, {
         friendRequestsPending: arrayUnion(fromUserId)
     });
-
-    // Optionnel: Ajouter l'ID de l'utilisateur destinataire dans la liste des demandes d'amis envoyées de l'utilisateur émetteur
-    const userFromRef = doc(db, 'users', fromUserId);
-    await updateDoc(userFromRef, {
-        friendRequestsSent: arrayUnion(toUserId)
-    });
 };
+
 
 export const startOrGetPrivateConversation = async (userId1, userId2) => {
     const q = query(
