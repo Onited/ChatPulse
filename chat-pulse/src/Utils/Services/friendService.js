@@ -36,24 +36,6 @@ export const declineFriendRequest = async (fromUserId, userId) => {
 
 };
 
-// export const listenForFriends = (userId, setFriends) => {
-//     const userDocRef = doc(db, 'users', userId);
-
-//     return onSnapshot(userDocRef, async (docSnapshot) => {
-//         const userData = docSnapshot.data();
-//         if (userData && userData.friendIds && userData.friendIds.length > 0) {
-//             const friendsQuery = query(collection(db, 'users'), where('__name__', 'in', userData.friendIds));
-//             const querySnapshot = await getDocs(friendsQuery);
-//             const friends = querySnapshot.docs.map(doc => ({
-//                 id: doc.id,
-//                 ...doc.data()
-//             }));
-//             setFriends(friends);
-//         } else {
-//             setFriends([]);
-//         }
-//     });
-// };
 
 export const listenForFriends = (userId, setFriends) => {
     const userDocRef = doc(db, 'users', userId);
