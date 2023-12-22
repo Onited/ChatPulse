@@ -16,5 +16,7 @@
         "**/.DS_Store",
         "**/Thumbs.db",
         "__pycache__"
-    ]
+    ],
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic"
 }
