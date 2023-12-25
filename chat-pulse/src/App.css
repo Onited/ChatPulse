@@ -1,0 +1,29 @@
+/* styles.css */
+:root {
+    --background-light: #ffffff;
+    --background-dark: #212121;
+    --text-light: #333;
+    --text-dark: #ffffff;
+}
+
+.light-mode {
+    background-color: var(--background-light);
+    color: var(--text-light);
+}
+
+.dark-mode {
+    background-color: var(--background-dark);
+    color: var(--text-dark);
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Menlo', monospace !important;
+}
+
+.app-container {
+    display: flex;
+    height: 100%;
+}

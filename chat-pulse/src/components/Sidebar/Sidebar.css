@@ -1,0 +1,48 @@
+.sidebar {
+    width: 250px; 
+    height: 100vh; 
+    padding: 10px;
+    position: fixed;
+}
+
+.dark-mode-sidebar {
+    background-color: #2f2f2f;
+    color: #fff;
+}
+
+.light-mode-sidebar {
+    background-color: #f0f0f0;
+    color: #2f2f2f;
+}
+
+.dark-mode-button {
+    background-color: #212121;
+    border: none;
+    color: #fff;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.light-mode-button {
+    background-color: #fff;
+    border: none;
+    color: #212121;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+/* Hover button */
+
+.dark-mode-button:hover {
+    background-color: #424242;
+}
+
+.light-mode-button:hover {
+    background-color: #e0e0e0;
+}

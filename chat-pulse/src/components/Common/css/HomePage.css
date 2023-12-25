@@ -1,0 +1,13 @@
+.home-container {
+    margin-bottom: 90px;
+    margin-left: 290px;
+    font-family: 'Menlo', monospace;
+    font-size: small;
+    width: 80%;
+}
+
+.home-page{
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}

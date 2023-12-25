@@ -1,0 +1,19 @@
+/* styles.css */
+:root {
+    --background-light: #fff;
+    --background-dark: #333;
+    --text-light: #333;
+    --text-dark: #fff;
+}
+
+.light-mode {
+    background-color: var(--background-light);
+    color: var(--text-light);
+}
+
+.dark-mode {
+    background-color: var(--background-dark);
+    color: var(--text-dark);
+}
+
+/* Ajoutez d'autres styles spécifiques pour chaque mode si nécessaire */

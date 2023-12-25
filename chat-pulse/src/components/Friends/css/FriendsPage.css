@@ -1,0 +1,13 @@
+.friends-container {
+    margin-bottom: 70px;
+    margin-left: 290px;
+    font-family: 'Menlo', monospace;
+    font-size: small;
+    width: 80%;
+}
+
+.friends-page{
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
